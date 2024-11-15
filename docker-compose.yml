@@ -1,0 +1,74 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: db-app
+    env_file:
+      - backend/.env
+    ports:
+      - "5432:5432"
+    expose:
+      - "5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - ecommerce-java
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    image: thantuan/ecommerce-backend:latest
+    container_name: backend-app
+    env_file:
+      - ./backend/.env
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8080:8080"
+    expose:
+      - "8080"
+    depends_on:
+      - db
+    networks:
+      - ecommerce-java
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    image: thantuan/ecommerce-frontend:latest
+    container_name: frontend-app
+    env_file:
+      - ./frontend/.env
+    environment:
+      - SERVER_API_URL=http://backend:8080
+      - NODE_ENV=production
+    ports:
+      - "3000:3000"
+    expose:
+      - "3000"
+    depends_on:
+      - backend
+    networks:
+      - ecommerce-java
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-server
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - ecommerce-java
+
+networks:
+  ecommerce-java:
+    driver: bridge
+
+volumes:
+  pgdata:
