@@ -11,6 +11,8 @@ RUN npm install --legacy-peer-deps
 # Copy toàn bộ mã nguồn
 COPY ./frontend ./
 
+COPY ./frontend/.env.dev .env.local
+
 # Build ứng dụng Next.js
 RUN npm run build
 

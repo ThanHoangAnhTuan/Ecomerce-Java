@@ -10,12 +10,6 @@ import axios from "axios";
 const Menu = () => {
     const [categoryList, setCategoryList] = useState([])
     useEffect(() => {
-        console.log("fetchDataCategory NEXT_PUBLIC_API_URL")
-        console.log(process.env.NEXT_PUBLIC_API_URL)
-        console.log("fetchDataCategory SERVER_API_URL")
-        console.log(process.env.SERVER_API_URL)
-
-        console.log(`${process.env.NEXT_PUBLIC_API_URL}/api/category/get-all-categories`)
         const fetchDataCategory = async () => {
             const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/category/get-all-categories`, {
                 withCredentials: true

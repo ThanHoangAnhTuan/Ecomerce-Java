@@ -3,7 +3,7 @@ services:
     image: postgres:latest
     container_name: db-app
     env_file:
-      - backend/.env.prod
+      - ./backend/.env.prod
     ports:
       - "5432:5432"
     expose:
@@ -19,6 +19,8 @@ services:
     container_name: backend-app
     env_file:
       - ./backend/.env.prod
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
     ports:
       - "8080:8080"
     expose:
@@ -33,7 +35,7 @@ services:
     pull_policy: always
     container_name: frontend-app
     env_file:
-      - frontend/.env.prod
+      - ./frontend/.env.prod
     ports:
       - "3000:3000"
     expose:
