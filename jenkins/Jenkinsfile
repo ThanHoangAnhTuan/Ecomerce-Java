@@ -21,7 +21,7 @@ pipeline {
         }
         stage('Push to Docker Registry') {
             steps {
-                withDockerRegistry([credentialsId: 'dockerhub', url: '']) {
+                withDockerRegistry([credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/']) {
                     sh "docker push ${DOCKER_IMAGE_BACKEND}"
                     sh "docker push ${DOCKER_IMAGE_FRONTEND}"
                 }
@@ -32,6 +32,15 @@ pipeline {
                 ansiblePlaybook(
                     playbook: 'ansible/dev/playbook.yml',
                     inventory: 'ansible/dev/inventory',
+                )
+            }
+        }
+        stage('Deploy to Production') {
+            steps {
+                ansiblePlaybook(
+                    playbook: 'ansible/prod/playbook.yml',
+                    inventory: 'ansible/prod/inventory',
+                    extras: "-e backend_image=${DOCKER_IMAGE_BACKEND} -e frontend_image=${DOCKER_IMAGE_FRONTEND}"
                 )
             }
         }

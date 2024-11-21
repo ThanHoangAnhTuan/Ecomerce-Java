@@ -5,20 +5,11 @@
       apt:
         name: docker.io
         state: present
-
-    - name: Ensure Docker Compose is installed
-      get_url:
-        url: "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-$(uname -s)-$(uname -m)"
-        dest: /usr/local/bin/docker-compose
-        mode: '0755'
-      when: ansible_distribution == "Ubuntu"
-
     - name: Start Docker service
       service:
         name: docker
         state: started
         enabled: yes
-
     - name: Pull latest images
       docker_image:
         name: "{{ item }}"
@@ -26,12 +17,14 @@
       loop:
         - "{{ backend_image }}"
         - "{{ frontend_image }}"
-
+    - name: Copy docker-compose file
+      copy:
+        src: D:/Learn/Web/ecommerce/docker-compose.prod.yml
+        dest: /home/ubuntu/docker-compose.yml
     - name: Stop existing containers
       docker_compose:
         project_src: D:/Learn/Web/ecommerce
         state: absent
-
     - name: Start new containers
       docker_compose:
         project_src: D:/Learn/Web/ecommerce

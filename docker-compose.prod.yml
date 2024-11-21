@@ -15,6 +15,7 @@ services:
 
   backend:
     image: thantuan/backend-app:latest
+    pull_policy: always
     container_name: backend-app
     env_file:
       - ./backend/.env.prod
@@ -29,6 +30,7 @@ services:
 
   frontend:
     image: thantuan/frontend-app:latest
+    pull_policy: always
     container_name: frontend-app
     env_file:
       - frontend/.env.prod
