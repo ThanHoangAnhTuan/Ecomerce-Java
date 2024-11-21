@@ -2,13 +2,14 @@ import Product from "@/app/components/Product";
 import {IProduct} from "@/app/types/types"
 import HeaderServer from "@/app/components/HeaderServer";
 import React from "react";
-import {ENV} from "@/config/config";
 
 
 const CategoryDetails = async ({params}: { params: Promise<{ slug: string }> }) => {
     const slug = (await params).slug[1]
     let productList = null
-    const response = await fetch(`${ENV.SERVER_API_URL}/api/products/get-product-by-category-id/${slug}`)
+    console.log(process.env.SERVER_API_URL)
+    console.log(process.env.NEXT_PUBLIC_API_URL)
+    const response = await fetch(`${process.env.SERVER_API_URL}/api/products/get-product-by-category-id/${slug}`)
     if (response.ok) {
         const data = await response.json();
         productList = data.productList;

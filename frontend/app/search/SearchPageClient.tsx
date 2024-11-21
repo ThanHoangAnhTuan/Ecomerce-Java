@@ -6,7 +6,6 @@ import axios from "axios";
 import Menu from "@/app/components/Menu";
 import SearchProductList from "@/app/components/SearchProductList";
 import {IProduct} from "@/app/types/types";
-import {ENV} from "@/config/config";
 
 const SearchPage = () => {
     const searchParams = useSearchParams();
@@ -16,7 +15,7 @@ const SearchPage = () => {
     useEffect(() => {
         const fetchDataSearchProduct = async () => {
             try {
-                const response = await axios.get(`${ENV.CLIENT_API_URL}/api/products/search-product?keyword=${keyword}`, {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/products/search-product?keyword=${keyword}`, {
                     withCredentials: true
                 })
                 const data = await response.data;

@@ -219,7 +219,7 @@ public class AuthService {
             throw new InvalidTokenException("Invalid token");
         }
         if (LocalDateTime.now().isAfter(savedToken.getExpiresAt())) {
-            throw new InvalidTokenException("Reset password token expired. Please request a resend.");
+            throw new InvalidTokenException("Token expired. Please request a resend.");
         }
         return savedToken;
     }

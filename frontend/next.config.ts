@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: 'shopee-clone.s3.ap-southeast-1.amazonaws.com',
+                hostname: 'ecommerce-java.s3.ap-southeast-1.amazonaws.com',
                 port: '',
                 pathname: '/**',
             }

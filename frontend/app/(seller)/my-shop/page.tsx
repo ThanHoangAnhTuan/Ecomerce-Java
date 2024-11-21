@@ -22,7 +22,7 @@ const MyShop = async () => {
     return (
         <>
             <HeaderServer></HeaderServer>
-            <ClientMyShop jwt={jwtPayload}/>
+            <ClientMyShop/>
         </>
     )
 }

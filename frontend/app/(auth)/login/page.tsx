@@ -21,7 +21,6 @@ import {useRouter, useSearchParams} from "next/navigation";
 import Link from "next/link";
 import {Separator} from "@/components/ui/separator";
 import {FcGoogle} from "react-icons/fc";
-import {ENV} from "@/config/config";
 
 const formSchemaLogin = z.object({
     email: z.string(),
@@ -53,7 +52,7 @@ const Login = () => {
     }, [searchParams]);
 
     async function onSubmit(values: z.infer<typeof formSchemaLogin>) {
-        axios.post(`${ENV.CLIENT_API_URL}/api/auth/login`, {
+        axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
             email: values.email,
             password: values.password
         }, {
@@ -152,7 +151,7 @@ const Login = () => {
                                 <Separator className={"flex-1"}/>
                             </div>
                             <div className={"flex justify-center"}>
-                                <Link href={`${ENV.CLIENT_API_URL}/oauth2/authorization/google`}>
+                                <Link href={`${process.env.NEXT_PUBLIC_API_URL}/oauth2/authorization/google`}>
                                     <Button type={"button"} className={"bg-white hover:bg-white text-black"}>
                                         <FcGoogle/>
                                         Google

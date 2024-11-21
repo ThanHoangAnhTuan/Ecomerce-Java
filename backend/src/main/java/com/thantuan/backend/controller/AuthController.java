@@ -36,13 +36,15 @@ public class AuthController {
         return ResponseEntity.ok(authService.activateAccount(email, token, httpServletResponse));
     }
 
-    @GetMapping("/activate-account-regain/")
-    public ResponseEntity<Response> activateAccountRegain(@RequestParam("email") String email) throws MessagingException {
+    @GetMapping("/activate-account-regain")
+    public ResponseEntity<Response> activateAccountRegain(@RequestParam("email") String email)
+            throws MessagingException {
         return ResponseEntity.ok(authService.activateAccountRegain(email));
     }
 
     @GetMapping("/request-reset-password")
-    public ResponseEntity<Response> requestResetPassword(@RequestParam("email") String email) throws MessagingException {
+    public ResponseEntity<Response> requestResetPassword(@RequestParam("email") String email)
+            throws MessagingException {
         return ResponseEntity.ok(authService.requestResetPassword(email));
     }
 

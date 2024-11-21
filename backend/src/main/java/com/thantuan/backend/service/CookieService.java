@@ -20,7 +20,11 @@ public class CookieService {
     public String getJwtFromCookie(@NonNull HttpServletRequest request, String cookieName) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
-            return Arrays.stream(cookies).filter(cookie -> cookie.getName().equals(cookieName)).map(Cookie::getValue).findFirst().orElse(null);
+            return Arrays.stream(cookies).filter(cookie -> cookie.getName()
+                                                                .equals(cookieName))
+                                                                .map(Cookie::getValue)
+                                                                .findFirst()
+                                                                .orElse(null);
         }
         return null;
     }

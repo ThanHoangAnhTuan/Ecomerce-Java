@@ -39,7 +39,6 @@ import axios from "axios";
 import {useRouter} from "next/navigation";
 import {IAddress, IJwt} from "@/app/types/types";
 import {Badge} from "@mui/material";
-import {ENV} from "@/config/config";
 
 
 const formSchemaSearch = z.object({
@@ -154,7 +153,7 @@ const HeaderClient = ({token}: { token: string }) => {
     }
 
     async function handlerLogout() {
-        await axios.get(`${ENV.CLIENT_API_URL}/api/auth/logout`, {
+        await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/logout`, {
             withCredentials: true
         })
         router.push('/')

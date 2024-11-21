@@ -1,0 +1,62 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: db-app
+    env_file:
+      - backend/.env.prod
+    ports:
+      - "5432:5432"
+    expose:
+      - "5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - ecommerce-java
+
+  backend:
+    image: thantuan/backend-app:latest
+    container_name: backend-app
+    env_file:
+      - ./backend/.env.prod
+    ports:
+      - "8080:8080"
+    expose:
+      - "8080"
+    depends_on:
+      - db
+    networks:
+      - ecommerce-java
+
+  frontend:
+    image: thantuan/frontend-app:latest
+    container_name: frontend-app
+    env_file:
+      - frontend/.env.prod
+    ports:
+      - "3000:3000"
+    expose:
+      - "3000"
+    depends_on:
+      - backend
+    networks:
+      - ecommerce-java
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-server
+    volumes:
+      - ./nginx.prod.conf:/etc/nginx/nginx.prod.conf
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - ecommerce-java
+
+networks:
+  ecommerce-java:
+    driver: bridge
+
+volumes:
+  pgdata:

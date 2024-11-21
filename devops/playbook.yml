@@ -1,0 +1,24 @@
+- name: Deploy application using Docker Compose
+  hosts: all
+  tasks:
+    - name: Ensure Docker is installed
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Ensure Docker Compose is installed
+      get_url:
+        url: "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-$(uname -s)-$(uname -m)"
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Copy Docker Compose file to server
+      copy:
+        src: ./docker-compose.yml
+        dest: /home/{{ ansible_user }}/docker-compose.yml
+
+    - name: Start Docker Compose
+      shell: |
+        cd /home/{{ ansible_user }}
+        docker-compose up -d

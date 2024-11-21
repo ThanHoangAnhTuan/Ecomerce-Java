@@ -30,7 +30,8 @@ public class JwtFilter extends OncePerRequestFilter {
     private final CookieService cookieService;
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
         List<String> pathNotUseJwtFilter = Arrays.asList("/api/login", "/api/auth/register", "/api/auth/login",
                 "/api/auth/logout", "/api/auth/activate-account", "/api/auth/activate-account-regain",
                 "/api/auth/request-reset-password", "/api/auth/verify-reset-password-token", "/api/auth/reset-password",
@@ -53,7 +54,8 @@ public class JwtFilter extends OncePerRequestFilter {
         if (accessTokenFromCookie == null || refreshTokenFromCookie == null) {
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("{\"message\": \"Missing JWT token. Please login.\",\n\"status\": " + HttpServletResponse.SC_UNAUTHORIZED + "}");
+            response.getWriter().write("{\"message\": \"Missing JWT token. Please login.\",\n\"status\": "
+                    + HttpServletResponse.SC_UNAUTHORIZED + "}");
             return;
         }
 
@@ -75,13 +77,15 @@ public class JwtFilter extends OncePerRequestFilter {
                 cookieService.resetCookie(response);
                 response.setContentType("application/json");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("{\"message\": \"Token Expired. Please login again!\",\n\"status\": " + HttpServletResponse.SC_UNAUTHORIZED + "}");
+                response.getWriter().write("{\"message\": \"Token Expired. Please login again!\",\n\"status\": "
+                        + HttpServletResponse.SC_UNAUTHORIZED + "}");
                 return;
             }
         } catch (JwtException e) {
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("{\"message\": " + e.getMessage() + "\",\n\"status\": " + HttpServletResponse.SC_UNAUTHORIZED + "}");
+            response.getWriter().write("{\"message\": " + e.getMessage() + "\",\n\"status\": "
+                    + HttpServletResponse.SC_UNAUTHORIZED + "}");
         }
 
         // Nếu username không phải null và chưa có xác thực trong SecurityContext
@@ -90,17 +94,20 @@ public class JwtFilter extends OncePerRequestFilter {
             if (!userDetails.isEnabled()) {
                 response.setContentType("application/json");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("{\"message\": \"Account is not activated. Please activate your account.\"," + "\n\"status\": " + HttpServletResponse.SC_UNAUTHORIZED + "}");
+                response.getWriter().write("{\"message\": \"Account is not activated. Please activate your account.\","
+                        + "\n\"status\": " + HttpServletResponse.SC_UNAUTHORIZED + "}");
                 return;
             }
             if (jwtService.validateToken(accessTokenFromCookie, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             } else {
                 response.setContentType("application/json");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("{\"message\": \"Invalid token. Please login again.\",\n\"status\": " + HttpServletResponse.SC_UNAUTHORIZED + "}");
+                response.getWriter().write("{\"message\": \"Invalid token. Please login again.\",\n\"status\": "
+                        + HttpServletResponse.SC_UNAUTHORIZED + "}");
             }
         }
         filterChain.doFilter(request, response);

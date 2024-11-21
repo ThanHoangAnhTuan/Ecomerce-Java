@@ -24,4 +24,4 @@ COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
 
 # Chạy ứng dụng Spring Boot
-CMD ["java", "-jar", "-Dspring.profiles.active=docker", "app.jar"]
+CMD ["java", "-jar", "app.jar"]

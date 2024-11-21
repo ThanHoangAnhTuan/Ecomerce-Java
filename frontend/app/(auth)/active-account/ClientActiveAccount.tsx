@@ -22,7 +22,6 @@ import {
     InputOTPSlot,
 } from "@/components/ui/input-otp"
 import axios from "axios";
-import {ENV} from "@/config/config";
 import {useState} from "react";
 
 const FormSchema = z.object({
@@ -45,7 +44,7 @@ const ActiveAccountClient = () => {
 
     async function onSubmit(values: z.infer<typeof FormSchema>) {
         const email = searchParams.get("email");
-        await axios.get(`${ENV.CLIENT_API_URL}/api/auth/activate-account?email=${email}&token=${values.pin}`).then(() => {
+        await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/activate-account?email=${email}&token=${values.pin}`).then(() => {
             setError("")
             router.push(`/`)
         }).catch((e) => {

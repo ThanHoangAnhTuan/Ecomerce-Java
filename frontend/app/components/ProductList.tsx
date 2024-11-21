@@ -3,15 +3,13 @@
 import {useEffect, useState} from "react";
 import Product from "@/app/components/Product";
 import {IProduct} from "@/app/types/types";
-import {ENV} from "@/config/config";
 import axios from "axios";
 
 const ProductList = () => {
     const [productList, setProductList] = useState([])
-
     useEffect(() => {
         const fetchDataProduct = async () => {
-            const response = await axios.get(`${ENV.CLIENT_API_URL}/api/products/get-all-products`, {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/products/get-all-products`, {
                 withCredentials: true
             })
             const data = await response.data

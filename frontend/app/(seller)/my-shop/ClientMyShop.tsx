@@ -19,7 +19,6 @@ import {Textarea} from "@/components/ui/textarea";
 import {BsImages, BsPaperclip} from "react-icons/bs";
 import Image from "next/image";
 import {useToast} from "@/hooks/use-toast";
-import {ENV} from "@/config/config";
 
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
 const ACCEPTED_IMAGE_MIME_TYPES = [
@@ -67,7 +66,7 @@ const getSchema = (isEditing:boolean) => {
 }
 
 
-const ClientMyShop = ({jwt}: { jwt: IJwt }) => {
+const ClientMyShop = () => {
     const [productList, setProductList] = useState<IProduct[]>([])
     const [categoryList, setCategoryList] = useState<ICategory[]>([])
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -105,7 +104,7 @@ const ClientMyShop = ({jwt}: { jwt: IJwt }) => {
 
     const onDelete = async (productInput: IProduct) => {
         try {
-            const response = await axios.delete(`${ENV.CLIENT_API_URL}/api/products/delete-product/${productInput.id}`, {
+            const response = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/products/delete-product/${productInput.id}`, {
                 withCredentials: true
             })
             const data = await response.data;
@@ -141,7 +140,7 @@ const ClientMyShop = ({jwt}: { jwt: IJwt }) => {
                 formData.append("file", values.file); // thêm tệp
             }
             if (!isEditing) {
-                const response = await axios.post(`${ENV.CLIENT_API_URL}/api/products/create-product`,
+                const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/products/create-product`,
                     formData, {withCredentials: true})
                 const data = await response.data;
                 setProductList([...productList, data.product])
@@ -152,7 +151,7 @@ const ClientMyShop = ({jwt}: { jwt: IJwt }) => {
                 })
                 setOpenDialog(false)
             } else {
-                const response = await axios.patch(`${ENV.CLIENT_API_URL}/api/products/update-product/${productUpdate?.id}`,
+                const response = await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/api/products/update-product/${productUpdate?.id}`,
                     formData, {withCredentials: true})
                 const data = await response.data;
                 setProductList(productList.map((product) => {
@@ -181,7 +180,7 @@ const ClientMyShop = ({jwt}: { jwt: IJwt }) => {
 
     useEffect(() => {
         const fetchDataProduct = async () => {
-            const response = await axios.get(`${ENV.CLIENT_API_URL}/api/products/get-product-by-seller-id`, {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/products/get-product-by-seller-id`, {
                 withCredentials: true,
             })
             const data = await response.data
@@ -192,7 +191,7 @@ const ClientMyShop = ({jwt}: { jwt: IJwt }) => {
 
     useEffect(() => {
         const fetchDataCategory = async () => {
-            const response = await axios.get(`${ENV.CLIENT_API_URL}/api/category/get-all-categories`, {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/category/get-all-categories`, {
                 withCredentials: true,
             })
             const data = await response.data
