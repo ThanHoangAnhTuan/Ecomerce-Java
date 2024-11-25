@@ -2,10 +2,7 @@ package com.thantuan.backend.entity;
 
 import com.thantuan.backend.enums.OrderStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -15,7 +12,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "orders")
-@Data
+@Getter
+@Setter
+@ToString(exclude = {"user", "payment", "orderItemList"})
+@EqualsAndHashCode(exclude = {"user", "payment", "orderItemList"})
 @EntityListeners(AuditingEntityListener.class)
 @Builder
 @NoArgsConstructor
@@ -38,10 +38,13 @@ public class Order {
     private LocalDateTime createAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "buyer_id")
+    private User buyer;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_id")
+    @JoinColumn(name = "seller_id")
+    private User seller;
+
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private Payment payment;
 }

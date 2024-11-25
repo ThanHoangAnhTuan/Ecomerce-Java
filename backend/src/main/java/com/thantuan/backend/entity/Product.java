@@ -1,10 +1,7 @@
 package com.thantuan.backend.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -13,7 +10,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "products")
-@Data
+@Getter
+@Setter
+@ToString(exclude = {"category", "user"})
+@EqualsAndHashCode(exclude = {"category", "user"})
 @EntityListeners(AuditingEntityListener.class)
 @Builder
 @NoArgsConstructor
@@ -38,7 +38,7 @@ public class Product {
     private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "seller_id")
     private User user;
 
     @CreatedDate

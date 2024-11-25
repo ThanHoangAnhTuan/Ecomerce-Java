@@ -46,6 +46,7 @@ public class CategoryService {
                                     .image(image)
                                     .name(name)
                                     .build();
+        categoryRepo.save(category);
         CategoryDtoResponse categoryDto = entityDtoMapper.mapCategoryToCategoryDto(category);
         return Response.builder()
                     .status(CREATED.value())

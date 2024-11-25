@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface IOrderRepo extends JpaRepository<Order, Long> {
-    List<Order> findAllByUserId(Long id);
-
-    List<Order> findByUserEmail(String email);
+    List<Order> findAllByBuyerId(Long id);
+    List<Order> findAllBySellerId(Long id);
 }

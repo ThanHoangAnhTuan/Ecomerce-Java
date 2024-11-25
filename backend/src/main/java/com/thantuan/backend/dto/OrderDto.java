@@ -20,6 +20,7 @@ public class OrderDto {
     private BigDecimal total;
     private String status;
     private List<OrderItemDto> orderItemList;
-    private UserDto user;
+    private UserDto buyer;
+    private UserDto seller;
     private LocalDateTime createAt;
 }

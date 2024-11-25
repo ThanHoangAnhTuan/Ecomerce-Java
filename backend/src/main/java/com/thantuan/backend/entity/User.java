@@ -2,10 +2,7 @@ package com.thantuan.backend.entity;
 
 import com.thantuan.backend.enums.AuthProvider;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -18,7 +15,10 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
+@ToString(exclude = {"roles", "orderList"})
+@EqualsAndHashCode(exclude = {"roles", "orderList"})
 @EntityListeners(AuditingEntityListener.class)
 public class User {
     @Id
@@ -44,7 +44,7 @@ public class User {
     private boolean accountLocked;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Order> orderList;
+    private List<Product> productList;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

@@ -8,9 +8,11 @@ import {EPayment, IOrderRequest, IProduct} from "@/app/types/types";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Separator} from "@/components/ui/separator";
 import axios from "axios";
+import {useToast} from "@/hooks/use-toast";
 
 const ProductDetailClient = ({product}: { product: IProduct }) => {
     const [quantity, setQuantity] = useState<number>(1)
+    const {toast} = useToast()
 
     useEffect(() => {
         if (quantity === 0) {
@@ -37,13 +39,22 @@ const ProductDetailClient = ({product}: { product: IProduct }) => {
                     status: EPayment.PENDING,
                 }
             }
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/order/buy-product`, order, {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/order/buy-product`,
+                order, {
                 withCredentials: true,
             })
             const data = await response.data;
-            console.log(data)
-        } catch (e) {
-            console.log(e)
+            toast({
+                className: "bg-green-500 text-white",
+                title: "Error",
+                description: data.message
+            })
+        } catch (e: unknown) {
+            toast({
+                className: "bg-red-500 text-white",
+                title: "Error",
+                description: (e as Error).message
+            })
         }
     }
 

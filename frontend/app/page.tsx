@@ -6,7 +6,7 @@ export default function Home() {
     return (
         <>
             <HeaderServer></HeaderServer>
-            <main className={"bg-[#f1f1f1] flex px-20 py-5"}>
+            <main className={"bg-[#f1f1f1] flex px-20 py-5 h-screen"}>
                 <Menu></Menu>
                 <ProductList></ProductList>
             </main>

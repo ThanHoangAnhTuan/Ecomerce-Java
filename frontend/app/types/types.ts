@@ -61,10 +61,28 @@ interface IOrderRequest {
     paymentInfo: IPayment;
 }
 
+interface IOrderItemResponse {
+    id: number,
+    quantity: number,
+    price: number,
+    product: IProduct,
+}
+
+interface IOrderResponse {
+    id: number,
+    total: number,
+    status: string,
+    orderItemList: IOrderItemResponse[]
+    buyer: IUser,
+    seller: IUser,
+    createdAt: Date,
+}
+
 enum EPayment {
     PENDING,
     APPROVED,
 }
 
 export {EPayment}
-export type {IProduct, IUser, ICategory, IJwt, IAddress, IOrderItemRequest, IOrderRequest}
+export type {IProduct, IUser, ICategory, IJwt, IAddress, IOrderItemRequest,
+    IOrderRequest, IOrderResponse, IOrderItemResponse}

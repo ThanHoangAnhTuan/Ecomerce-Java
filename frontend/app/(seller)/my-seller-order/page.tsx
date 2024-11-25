@@ -3,7 +3,7 @@ import jwt, {JwtPayload} from "jsonwebtoken"
 import {IJwt} from "@/app/types/types";
 import {redirect, RedirectType} from "next/navigation";
 import HeaderServer from "@/app/components/HeaderServer";
-import BuyerClient from "@/app/(buyer)/my-buyer-order/ClientBuyerOrder";
+import SellerClient from "@/app/(seller)/my-seller-order/ClientSellerOrder";
 
 const MyShop = async () => {
     const cookieStore = await cookies()
@@ -16,13 +16,13 @@ const MyShop = async () => {
         redirect("/", RedirectType.replace)
     }
     const jwtPayload: IJwt = decoded as IJwt;
-    if (!jwtPayload.role.includes("BUYER")) {
+    if (!jwtPayload.role.includes("SELLER")) {
         redirect("/", RedirectType.replace)
     }
     return (
         <>
             <HeaderServer></HeaderServer>
-            <BuyerClient/>
+            <SellerClient/>
         </>
     )
 }

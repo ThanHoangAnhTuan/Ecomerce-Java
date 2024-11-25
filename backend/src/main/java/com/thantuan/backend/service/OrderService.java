@@ -53,9 +53,12 @@ public class OrderService {
 
         BigDecimal totalPrice = BigDecimal.ZERO;
 
+        User seller = null;
+
         for (OrderItemRequest item : orderRequest.getOrderItemList()) {
             Product product = productRepo.findById(item.getProductId())
                                         .orElseThrow(() -> new ProductNotFoundException("Product Not Found"));
+            seller = product.getUser();
             if (product != null) {
                 BigDecimal itemPrice = product.getPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
                 totalPrice = totalPrice.add(itemPrice);
@@ -66,17 +69,21 @@ public class OrderService {
                                 .status(orderRequest.getPaymentInfo().getStatus())
                                 .method(orderRequest.getPaymentInfo().getMethod())
                                 .build();
-        paymentRepo.save(payment);
 
         Order order = Order.builder()
                 .orderItemList(orderItemList)
                 .total(totalPrice)
                 .status(OrderStatus.PENDING)
-                .user(user)
+                .buyer(user)
+                .seller(seller)
                 .payment(payment)
                 .build();
         orderItemList.forEach(orderItem -> orderItem.setOrder(order));
         orderRepo.save(order);
+
+        payment.setOrder(order);
+        paymentRepo.save(payment);
+
         return Response.builder()
                     .status(OK.value())
                     .message("Order was successfully")
@@ -91,7 +98,7 @@ public class OrderService {
             throw new UsernameNotFoundException("User not found");
         }
         Order order = orderRepo.findById(orderId).orElseThrow(() -> new UsernameNotFoundException("Order Not Found"));
-        if (!Objects.equals(order.getUser().getId(), user.getId())) {
+        if (!Objects.equals(order.getSeller().getId(), user.getId())) {
             throw new UsernameNotFoundException("User not logged in");
         }
         order.setStatus(OrderStatus.valueOf(status.toUpperCase()));
@@ -109,7 +116,8 @@ public class OrderService {
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
-        List<Order> orderList = orderRepo.findAllByUserId(user.getId());
+        List<Order> orderList = orderRepo.findAllByBuyerId(user.getId());
+        System.out.println(orderList);
         List<OrderDto> orderDtoList = orderList.stream()
                                             .map(entityDtoMapper::mapOrderToOrderDto)
                                             .toList();
@@ -126,7 +134,7 @@ public class OrderService {
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
-        List<Order> orderList = orderRepo.findByUserEmail(user.getEmail());
+        List<Order> orderList = orderRepo.findAllBySellerId(user.getId());
         List<OrderDto> orderDtoList = orderList.stream()
                                             .map(entityDtoMapper::mapOrderToOrderDto)
                                             .toList();
