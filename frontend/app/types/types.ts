@@ -80,7 +80,11 @@ interface IOrderResponse {
 
 enum EPayment {
     PENDING,
-    APPROVED,
+    CONFIRMED,
+    SHIPPED,
+    DELIVERED,
+    CANCELLED,
+    RETURNED,
 }
 
 export {EPayment}

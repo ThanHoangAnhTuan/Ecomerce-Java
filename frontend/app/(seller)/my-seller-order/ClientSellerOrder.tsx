@@ -3,7 +3,7 @@
 import {DataTable} from "@/app/(seller)/my-seller-order/components/data-table";
 import * as React from "react";
 import {getColumns} from "@/app/(seller)/my-seller-order/components/columns";
-import {IOrderResponse} from "@/app/types/types";
+import {EPayment, IOrderResponse} from "@/app/types/types";
 import {useEffect, useState} from "react";
 import axios from "axios";
 
@@ -21,8 +21,18 @@ const SellerClient = () => {
         fetchDataProduct()
     }, []);
 
-    const onUpdate = () => {
-        console.log("On update")
+    const onUpdate = async (order: IOrderResponse) => {
+        let body = ""
+        if (order.status === "PENDING") {
+            body = JSON.stringify(EPayment.CONFIRMED)
+        } else if (order.status === "CONFIRMED") {
+            body = JSON.stringify(EPayment.SHIPPED)
+        } else if (order.status === "SHIPPED") {
+            body = JSON.stringify(EPayment.DELIVERED)
+        }
+        const response = await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/api/order/update-order-status/${order.id}`,body, {
+            withCredentials: true
+        })
     }
     const columns = getColumns({onUpdate})
 
