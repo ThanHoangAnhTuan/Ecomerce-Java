@@ -5,8 +5,8 @@
   vars:
     app_directory: /home/ubuntu/ecommerce
     docker_compose_file: /home/ubuntu/ecommerce/docker-compose.yml
-    backend_image: "your-dockerhub-username/backend:latest"
-    frontend_image: "your-dockerhub-username/frontend:latest"
+    backend_image: "thantuan/backend-app:latest"
+    frontend_image: "thantuan/frontend-app:latest"
 
   tasks:
     - name: Update and upgrade apt packages
@@ -73,7 +73,7 @@
 
     - name: Copy docker-compose file to EC2
       copy:
-        src: files/docker-compose.prod.yml
+        src: ../../docker-compose.prod.yml
         dest: "{{ docker_compose_file }}"
         owner: ubuntu
         group: ubuntu
@@ -81,7 +81,7 @@
 
     - name: Copy .env file to frontend
       copy:
-        src: files/frontend/.env.prod
+        src: ../../frontend/.env.prod
         dest: "{{ app_directory }}/frontend/.env"
         owner: ubuntu
         group: ubuntu
@@ -89,7 +89,7 @@
 
     - name: Copy .env file to backend
       copy:
-        src: files/backend/.env.prod
+        src: ../../backend/.env.prod
         dest: "{{ app_directory }}/backend/.env"
         owner: ubuntu
         group: ubuntu
