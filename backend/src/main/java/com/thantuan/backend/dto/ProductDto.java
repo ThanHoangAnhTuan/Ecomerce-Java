@@ -21,6 +21,6 @@ public class ProductDto {
     private BigDecimal price;
     private CategoryDtoResponse category;
     private UserDto user;
-    private int inventory;
+    private int stock;
     private int quantity;
 }

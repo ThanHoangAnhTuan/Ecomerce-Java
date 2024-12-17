@@ -4,15 +4,37 @@ import Image from "next/image";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import React, {useEffect, useState} from "react";
-import {EPayment, IOrderRequest, IProduct} from "@/app/types/types";
+import {IProduct, IProductInCart} from "@/app/types/types";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Separator} from "@/components/ui/separator";
-import axios from "axios";
-import {useToast} from "@/hooks/use-toast";
+import {useRouter} from "next/navigation";
+import {z} from "zod"
+import {zodResolver} from "@hookform/resolvers/zod"
+import {useForm} from "react-hook-form"
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+
+const formSchema = z.object({
+    comment: z.string().min(1)
+})
 
 const ProductDetailClient = ({product}: { product: IProduct }) => {
     const [quantity, setQuantity] = useState<number>(1)
-    const {toast} = useToast()
+    const router = useRouter()
+
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            comment: "",
+        },
+    })
 
     useEffect(() => {
         if (quantity === 0) {
@@ -21,46 +43,49 @@ const ProductDetailClient = ({product}: { product: IProduct }) => {
     }, [quantity]);
 
     if (!product) {
-        return (
-            <></>
-        )
+        return null
+    }
+
+    const handleAddProductToLocalStorage = async () => {
+        const cartData = localStorage.getItem("cart");
+        const cart = cartData ? JSON.parse(cartData) : [];
+        const foundProduct: IProductInCart = cart.find((item: IProductInCart) => item.id === product.id)
+        if (foundProduct) {
+            foundProduct.quantity += quantity;
+        } else {
+            const productInCart = {
+                id: product.id,
+                image: product.image,
+                name: product.name,
+                price: product.price,
+                quantity: quantity,
+                checkbox: true
+            }
+            cart.push(productInCart)
+        }
+        localStorage.setItem("cart", JSON.stringify(cart))
     }
 
     const handleBuyProduct = async () => {
-        try {
-            const order: IOrderRequest = {
-                orderItemList: [{
-                    productId: product.id,
-                    quantity,
-                }],
-                paymentInfo: {
-                    amount: 0,
-                    method: "cash",
-                    status: EPayment.PENDING,
-                }
-            }
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/order/buy-product`,
-                order, {
-                withCredentials: true,
-            })
-            const data = await response.data;
-            toast({
-                className: "bg-green-500 text-white",
-                title: "Error",
-                description: data.message
-            })
-        } catch (e: unknown) {
-            toast({
-                className: "bg-red-500 text-white",
-                title: "Error",
-                description: (e as Error).message
-            })
-        }
+        await handleAddProductToLocalStorage()
+        router.push("/order-details")
+    }
+
+    const addProductToCart = async () => {
+        await handleAddProductToLocalStorage()
+        // show message
+    }
+
+    // 2. Define a submit handler.
+    function onSubmit(values: z.infer<typeof formSchema>) {
+        // Do something with the form values.
+        // ✅ This will be type-safe and validated.
+        console.log(values)
     }
 
     return (
-        <>
-            <div className={"grid grid-cols-7 px-20 pt-5 bg-[#f1f1f1] gap-5 h-screen"}>
+        <div className={"flex flex-col "}>
+            <div className={"grid grid-cols-7 px-20 pt-5 bg-[#f1f1f1] gap-5"}>
                 <div className={"col-span-2 bg-white rounded h-fit p-4"}>
                     <Image src={product?.image} alt={product?.image} width={100} height={100} unoptimized={true}
                            className={"w-full p-5 rounded border object-fill"}/>
@@ -101,10 +126,36 @@ const ProductDetailClient = ({product}: { product: IProduct }) => {
                     }).format(product?.price * quantity)}</h1>
                     <Button className={"w-full bg-red-500 hover:bg-red-400 my-2 shadow-2xl"}
                             onClick={() => handleBuyProduct()}>Mua ngay</Button>
-                    <Button className={"w-full bg-white text-black hover:bg-white"}>Thêm vào giỏ hàng</Button>
+                    <Button className={"w-full bg-white text-black hover:bg-white"} onClick={() => addProductToCart()}>Thêm
+                        vào giỏ hàng</Button>
                 </div>
             </div>
-        </>
+            <div className={"bg-[#f1f1f1] pt-5"}>
+                <div className={"mx-20 bg-white px-4"}>
+                    <h1 className={"text-2xl"}>Khách hàng nói về sản phẩm</h1>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2">
+                            <FormField
+                                control={form.control}
+                                name="comment"
+                                render={({field}) => (
+                                    <FormItem className={"flex-1"}>
+                                        <FormControl>
+                                            <Input placeholder={"Nhập nội dung bình luận"} {...field}/>
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+                            <Button type="submit">Gửi bình luận</Button>
+                        </form>
+                    </Form>
+                    <div>
+                        <h1>Chưa có bình luận nào</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
     )
 }
 

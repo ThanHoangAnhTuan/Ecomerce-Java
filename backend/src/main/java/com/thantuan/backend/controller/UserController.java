@@ -2,6 +2,7 @@ package com.thantuan.backend.controller;
 
 import com.thantuan.backend.dto.Response;
 import com.thantuan.backend.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
@@ -15,6 +16,7 @@ import java.util.Map;
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 @Slf4j
+@SecurityRequirement(name = "bearerAuth")
 public class UserController {
     private final UserService userService;
 

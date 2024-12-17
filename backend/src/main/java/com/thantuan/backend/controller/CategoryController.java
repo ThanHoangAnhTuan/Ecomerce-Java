@@ -4,6 +4,7 @@ import com.thantuan.backend.dto.Response;
 import com.thantuan.backend.exception.CategoryAlreadyExistsException;
 import com.thantuan.backend.exception.CategoryNameNotNullException;
 import com.thantuan.backend.service.CategoryService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,6 +16,8 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/api/category")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
+
 public class CategoryController {
     private final CategoryService categoryService;
 

@@ -8,8 +8,6 @@ import axios from "axios";
 const ProductList = () => {
     const [productList, setProductList] = useState([])
     useEffect(() => {
-        console.log(process.env.SERVER_API_URL)
-        console.log(process.env.NEXT_PUBLIC_API_URL)
         const fetchDataProduct = async () => {
             const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/products/get-all-products`, {
                 withCredentials: true

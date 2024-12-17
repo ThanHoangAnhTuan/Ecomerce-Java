@@ -17,8 +17,6 @@ import java.util.Set;
 @Table(name = "users")
 @Getter
 @Setter
-@ToString(exclude = {"roles", "orderList"})
-@EqualsAndHashCode(exclude = {"roles", "orderList"})
 @EntityListeners(AuditingEntityListener.class)
 public class User {
     @Id

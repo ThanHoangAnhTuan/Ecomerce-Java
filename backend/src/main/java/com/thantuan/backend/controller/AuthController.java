@@ -3,6 +3,7 @@ package com.thantuan.backend.controller;
 import com.thantuan.backend.dto.*;
 import com.thantuan.backend.exception.EmailAlreadyExistsException;
 import com.thantuan.backend.service.AuthService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -19,6 +20,7 @@ import java.io.IOException;
 @Slf4j
 @RestController
 @RequestMapping("/api/auth")
+@SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;

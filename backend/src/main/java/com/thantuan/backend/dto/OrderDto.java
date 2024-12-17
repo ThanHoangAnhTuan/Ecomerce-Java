@@ -21,6 +21,5 @@ public class OrderDto {
     private String status;
     private List<OrderItemDto> orderItemList;
     private UserDto buyer;
-    private UserDto seller;
     private LocalDateTime createAt;
 }

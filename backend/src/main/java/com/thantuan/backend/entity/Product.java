@@ -12,8 +12,6 @@ import java.time.LocalDateTime;
 @Table(name = "products")
 @Getter
 @Setter
-@ToString(exclude = {"category", "user"})
-@EqualsAndHashCode(exclude = {"category", "user"})
 @EntityListeners(AuditingEntityListener.class)
 @Builder
 @NoArgsConstructor
@@ -30,7 +28,7 @@ public class Product {
     private String descriptionWithoutAccent;
     private BigDecimal price;
     private String image;
-    private int inventory;
+    private int stock;
     private int quantity;
 
     @ManyToOne(fetch = FetchType.LAZY)

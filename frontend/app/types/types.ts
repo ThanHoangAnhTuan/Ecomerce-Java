@@ -87,6 +87,15 @@ enum EPayment {
     RETURNED,
 }
 
+interface IProductInCart {
+    id: number
+    name: string
+    image: string
+    quantity: number
+    price: number
+    checkbox: boolean
+}
+
 export {EPayment}
 export type {IProduct, IUser, ICategory, IJwt, IAddress, IOrderItemRequest,
-    IOrderRequest, IOrderResponse, IOrderItemResponse}
+    IOrderRequest, IOrderResponse, IOrderItemResponse, IProductInCart}

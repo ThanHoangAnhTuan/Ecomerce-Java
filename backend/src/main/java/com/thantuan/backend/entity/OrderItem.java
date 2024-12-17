@@ -9,8 +9,6 @@ import java.math.BigDecimal;
 @Table(name = "order_items")
 @Getter
 @Setter
-@ToString(exclude = {"order", "product"})
-@EqualsAndHashCode(exclude = {"order", "product"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,6 +22,10 @@ public class OrderItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id")
+    private User seller;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")

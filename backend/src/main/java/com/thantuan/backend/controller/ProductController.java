@@ -4,6 +4,7 @@ import com.thantuan.backend.dto.CreateProductDtoRequest;
 import com.thantuan.backend.dto.Response;
 import com.thantuan.backend.dto.UpdateProductDtoRequest;
 import com.thantuan.backend.service.ProductService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,8 @@ import java.io.IOException;
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
 @Slf4j
+@SecurityRequirement(name = "bearerAuth")
+
 public class ProductController {
     private final ProductService productService;
 

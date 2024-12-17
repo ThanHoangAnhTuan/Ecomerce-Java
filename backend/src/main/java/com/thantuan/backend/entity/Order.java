@@ -14,8 +14,6 @@ import java.util.List;
 @Table(name = "orders")
 @Getter
 @Setter
-@ToString(exclude = {"user", "payment", "orderItemList"})
-@EqualsAndHashCode(exclude = {"user", "payment", "orderItemList"})
 @EntityListeners(AuditingEntityListener.class)
 @Builder
 @NoArgsConstructor
@@ -40,10 +38,6 @@ public class Order {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buyer_id")
     private User buyer;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seller_id")
-    private User seller;
 
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private Payment payment;

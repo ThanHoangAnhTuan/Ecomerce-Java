@@ -6,33 +6,36 @@ import {getColumns} from "@/app/(seller)/my-seller-order/components/columns";
 import {EPayment, IOrderResponse} from "@/app/types/types";
 import {useEffect, useState} from "react";
 import axios from "axios";
+import {useToast} from "@/hooks/use-toast";
 
 const SellerClient = () => {
     const [orderList, setOrderList] = useState<IOrderResponse[]>([])
+    const {toast} = useToast()
+    const fetchDataProduct = async () => {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/order/seller`, {
+            withCredentials: true,
+        })
+        const data = await response.data
+        console.log(data)
+        setOrderList(data.orderList)
+    }
 
     useEffect(() => {
-        const fetchDataProduct = async () => {
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/order/seller`, {
-                withCredentials: true,
-            })
-            const data = await response.data
-            setOrderList(data.orderList)
-        }
+
         fetchDataProduct()
     }, []);
 
     const onUpdate = async (order: IOrderResponse) => {
-        let body = ""
-        if (order.status === "PENDING") {
-            body = JSON.stringify(EPayment.CONFIRMED)
-        } else if (order.status === "CONFIRMED") {
-            body = JSON.stringify(EPayment.SHIPPED)
-        } else if (order.status === "SHIPPED") {
-            body = JSON.stringify(EPayment.DELIVERED)
-        }
-        const response = await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/api/order/update-order-status/${order.id}`,body, {
+        const response = await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/api/order/update-order-status/${order.id}`,null, {
             withCredentials: true
         })
+        const data = await response.data;
+        toast({
+            className: "bg-red-500 text-white",
+            title: "Error",
+            description: data.message
+        })
+        await fetchDataProduct()
     }
     const columns = getColumns({onUpdate})
 

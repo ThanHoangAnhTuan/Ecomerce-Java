@@ -71,7 +71,7 @@ public class ProductService {
                                 .descriptionWithoutAccent(removeVietnameseTones(createProductDto.getDescription()))
                                 .price(createProductDto.getPrice())
                                 .image(s3Service.uploadFile(createProductDto.getFile()))
-                                .inventory(createProductDto.getInventory())
+                                .stock(createProductDto.getInventory())
                                 .quantity(0)
                                 .category(category)
                                 .user(user.getUser())
@@ -130,7 +130,7 @@ public class ProductService {
         product.setName(updateProductDto.getName());
         product.setPrice(updateProductDto.getPrice());
         product.setDescription(updateProductDto.getDescription());
-        product.setInventory(updateProductDto.getInventory());
+        product.setStock(updateProductDto.getInventory());
         Product productSaved = productRepo.save(product);
         ProductDto productDto = entityDtoMapper.mapProductToProductDto(productSaved);
         return Response.builder()

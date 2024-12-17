@@ -27,10 +27,10 @@ const Menu = () => {
                 categoryList.map((category:ICategory) => (
                     <Link key={category.id}
                           href={`/category/${removeVietnameseTonesAndReplaceSpaces(category.name)}/${category.id}`}
-                          className={"flex items-center hover:bg-[#f1f1f1] rounded min-w-40 px-2"}
+                          className={"flex items-center hover:bg-[#f1f1f1] rounded min-w-40 px-2 min-h-fit"}
                     >
                         <Image className={"mix-blend-darken mr-2"} src={category.image} alt={category.name} width={40} height={40}/>
-                        <h1 className={"whitespace-nowrap"}>{category.name}</h1>
+                        <h1 className={""}>{category.name}</h1>
                     </Link>
 
                 ))

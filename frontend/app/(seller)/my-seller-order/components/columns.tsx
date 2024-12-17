@@ -50,19 +50,6 @@ export const getColumns = ({onUpdate}: ColumnsProps): ColumnDef<IOrderResponse>[
         ),
     },
     {
-        accessorKey: "orderItemList.product.description",
-        header: "Description",
-        cell: ({row}) => (
-            <div className="capitalize">
-                {
-                    row.original.orderItemList.map(item => (
-                        <div key={item.id} className="capitalize">{item.product.description}</div>
-                    ))
-                }
-            </div>
-        ),
-    },
-    {
         accessorKey: "orderItemList.product.price",
         header: "Price",
         cell: ({row}) => {
@@ -93,14 +80,12 @@ export const getColumns = ({onUpdate}: ColumnsProps): ColumnDef<IOrderResponse>[
         accessorKey: "orderItemList.price",
         header: "Total price",
         cell: ({row}) => {
-            return row.original.orderItemList.map(item => {
-                const price = item.price
-                const formatted = new Intl.NumberFormat("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                }).format(price)
-                return <div key={item.id} className="text-right font-medium">{formatted}</div>
-            })
+            const price = row.original.total
+            const formatted = new Intl.NumberFormat("vi-VN", {
+                style: "currency",
+                currency: "VND",
+            }).format(price)
+            return <div className="text-right font-medium">{formatted}</div>
         },
     },
     {

@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -41,48 +40,48 @@ public class OrderService {
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
+        Payment payment = Payment.builder()
+                .amount(orderRequest.getPaymentInfo().getAmount())
+                .status(orderRequest.getPaymentInfo().getStatus())
+                .method(orderRequest.getPaymentInfo().getMethod())
+                .build();
+
+        Order order = Order.builder()
+                .buyer(user)
+                .status(OrderStatus.PENDING)
+                .payment(payment)
+                .build();
+
+        payment.setOrder(order);
+
         List<OrderItem> orderItemList = orderRequest.getOrderItemList().stream().map(orderItemRequest -> {
             Product product = productRepo.findById(orderItemRequest.getProductId())
-                                        .orElseThrow(() -> new ProductNotFoundException("Product Not Found"));
+                    .orElseThrow(() -> new ProductNotFoundException("Product Not Found"));
             return OrderItem.builder()
-                            .product(product)
-                            .quantity(orderItemRequest.getQuantity())
-                            .price(product.getPrice().multiply(BigDecimal.valueOf(orderItemRequest.getQuantity())))
-                            .build();
-        }).collect(Collectors.toList());
+                    .order(order)
+                    .product(product)
+                    .quantity(orderItemRequest.getQuantity())
+                    .price(product.getPrice())
+                    .seller(product.getUser())
+                    .build();
+        }).toList();
 
         BigDecimal totalPrice = BigDecimal.ZERO;
 
-        User seller = null;
-
-        for (OrderItemRequest item : orderRequest.getOrderItemList()) {
-            Product product = productRepo.findById(item.getProductId())
-                                        .orElseThrow(() -> new ProductNotFoundException("Product Not Found"));
-            seller = product.getUser();
-            if (product != null) {
-                BigDecimal itemPrice = product.getPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
-                totalPrice = totalPrice.add(itemPrice);
-            }
+        for (OrderItem orderItem : orderItemList) {
+            Product product = productRepo.findById(orderItem.getProduct().getId())
+                    .orElseThrow(() -> new ProductNotFoundException("Product Not Found"));
+            product.setStock(product.getStock() - orderItem.getQuantity());
+            BigDecimal itemPrice = orderItem.getPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity()));
+            totalPrice = totalPrice.add(itemPrice);
         }
-        Payment payment = Payment.builder()
-                                .amount(orderRequest.getPaymentInfo().getAmount())
-                                .status(orderRequest.getPaymentInfo().getStatus())
-                                .method(orderRequest.getPaymentInfo().getMethod())
-                                .build();
 
-        Order order = Order.builder()
-                .orderItemList(orderItemList)
-                .total(totalPrice)
-                .status(OrderStatus.PENDING)
-                .buyer(user)
-                .seller(seller)
-                .payment(payment)
-                .build();
-        orderItemList.forEach(orderItem -> orderItem.setOrder(order));
+        order.setTotal(totalPrice);
+        order.setOrderItemList(orderItemList);
+
         orderRepo.save(order);
-
-        payment.setOrder(order);
         paymentRepo.save(payment);
+        orderRepo.save(order);
 
         return Response.builder()
                     .status(OK.value())
@@ -90,7 +89,7 @@ public class OrderService {
                     .build();
     }
 
-    public Response updateOrderItemStatus(Long orderId, String status) {
+    public Response updateOrderStatus(Long orderId) throws IllegalAccessException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User user = userRepo.findByEmail(email);
@@ -98,15 +97,36 @@ public class OrderService {
             throw new UsernameNotFoundException("User not found");
         }
         Order order = orderRepo.findById(orderId).orElseThrow(() -> new UsernameNotFoundException("Order Not Found"));
-        if (!Objects.equals(order.getSeller().getId(), user.getId())) {
-            throw new UsernameNotFoundException("User not logged in");
+        if (Objects.equals(order.getStatus().toString(), "CANCEL")) {
+            throw new IllegalAccessException("You can not update order status when it is cancelled");
         }
-        order.setStatus(OrderStatus.valueOf(status.toUpperCase()));
+        order.setStatus(order.getStatus().getNext());
         orderRepo.save(order);
         return Response.builder()
                     .status(OK.value())
                     .message("Order status updated successfully")
                     .build();
+    }
+
+    public Response cancelOrder(Long orderId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user = userRepo.findByEmail(email);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        Order order = orderRepo.findById(orderId).orElseThrow(() -> new UsernameNotFoundException("Order Not Found"));
+        if (!order.getBuyer().equals(user)) {
+            throw new UsernameNotFoundException("You are not the buyer of this order");
+        }
+        if (Objects.equals(order.getStatus().toString(), "PENDING")) {
+            order.setStatus(OrderStatus.CANCELLED);
+        }
+        orderRepo.save(order);
+        return Response.builder()
+                .status(OK.value())
+                .message("Order status updated successfully")
+                .build();
     }
 
     public Response getOrderBuyer() {

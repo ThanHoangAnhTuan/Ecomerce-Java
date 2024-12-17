@@ -31,7 +31,7 @@ public class EntityDtoMapper {
         productDto.setDescription(product.getDescription());
         productDto.setImage(product.getImage());
         productDto.setUser(mapUserToUserDto(product.getUser()));
-        productDto.setInventory(product.getInventory());
+        productDto.setStock(product.getStock());
         productDto.setCategory(mapCategoryToCategoryDto(product.getCategory()));
         return productDto;
     }
@@ -64,7 +64,6 @@ public class EntityDtoMapper {
                                                 .toList();
         orderDto.setOrderItemList(orderItemDtoList);
         orderDto.setCreateAt(order.getCreateAt());
-        orderDto.setSeller(mapUserToUserDto(order.getSeller()));
         orderDto.setBuyer(mapUserToUserDto(order.getBuyer()));
         return orderDto;
     }

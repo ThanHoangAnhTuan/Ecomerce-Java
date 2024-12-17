@@ -5,7 +5,7 @@ import React from "react";
 import DataTableRowActions from "@/app/(buyer)/my-buyer-order/components/row-action";
 
 interface ColumnsProps {
-    onUpdate: (product: IOrderResponse) => void,
+    onUpdate: (order: IOrderResponse) => void,
 }
 
 export const getColumns = ({onUpdate}: ColumnsProps): ColumnDef<IOrderResponse>[] => [
@@ -19,9 +19,11 @@ export const getColumns = ({onUpdate}: ColumnsProps): ColumnDef<IOrderResponse>[
     {
         accessorKey: "seller",
         header: "Shop",
-        cell: ({row}) => (
-            <div className="capitalize">{row.original.seller?.name}</div>
-        ),
+        cell: ({row}) => {
+            return row.original.orderItemList.map((item) => {
+                return <div key={item.id} className="capitalize">{item.product.user.name}</div>
+            })
+        }
     },
     {
         accessorKey: "orderItemList.product.name",
@@ -43,7 +45,8 @@ export const getColumns = ({onUpdate}: ColumnsProps): ColumnDef<IOrderResponse>[
             <div className="capitalize">
                 {
                     row.original.orderItemList.map(item => (
-                        <Image key={item.id} src={item.product.image || ""} alt={item.product.name} width={100} height={100}/>
+                        <Image key={item.id} src={item.product.image || ""} alt={item.product.name} width={100}
+                               height={100}/>
                     ))
                 }
             </div>
@@ -93,14 +96,13 @@ export const getColumns = ({onUpdate}: ColumnsProps): ColumnDef<IOrderResponse>[
         accessorKey: "orderItemList.price",
         header: "Total price",
         cell: ({row}) => {
-            return row.original.orderItemList.map(item => {
-                const price = item.price
-                const formatted = new Intl.NumberFormat("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                }).format(price)
-                return <div key={item.id} className="text-right font-medium">{formatted}</div>
-            })
+
+            const price = row.original.total
+            const formatted = new Intl.NumberFormat("vi-VN", {
+                style: "currency",
+                currency: "VND",
+            }).format(price)
+            return <div className="text-right font-medium">{formatted}</div>
         },
     },
     {
@@ -115,8 +117,12 @@ export const getColumns = ({onUpdate}: ColumnsProps): ColumnDef<IOrderResponse>[
     {
         id: "actions",
         enableHiding: false,
-        cell: ({row}) =>
-            <DataTableRowActions row={row}
-                                 onUpdate={onUpdate}/>,
+        cell: ({row}) => {
+            const status: string = row.getValue("status")
+            if (status === "PENDING") {
+                return <DataTableRowActions row={row}
+                                            onUpdate={onUpdate}/>
+            }
+        }
     },
 ]

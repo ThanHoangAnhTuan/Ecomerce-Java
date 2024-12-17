@@ -267,7 +267,7 @@ const HeaderClient = ({token}: { token: string }) => {
                             </Link>
                         )
                     }
-                    <Link href={"/"} className={"flex items-center px-4 py-2 rounded hover:bg-[#0A68FF33]"}>
+                    <Link href={"/order-details"} className={"flex items-center px-4 py-2 rounded hover:bg-[#0A68FF33]"}>
                         <Badge color="info" badgeContent={1}>
                             <CiShoppingCart className={"size-5"}/>
                         </Badge>

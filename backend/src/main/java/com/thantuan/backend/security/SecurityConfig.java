@@ -1,11 +1,9 @@
 package com.thantuan.backend.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thantuan.backend.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -15,7 +13,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,28 +29,44 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.cors(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable)
+        return http
+                .cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> {
-                    req.requestMatchers("/api/auth/register", "/api/auth/logout", "/api/auth/login/**",
-                                    "/api/auth/activate-account/**", "/favicon.ico",
-                                    "/api/auth/activate-account-regain/**", "/v2/api-docs",
-                                    "/v3/api-docs", "/v3/api-docs/**", "/swagger-resources",
-                                    "/swagger-resources/**", "/configuration/ui",
-                                    "/configuration/security", "/swagger-ui/**", "/webjars/**",
-                                    "/swagger-ui.html", "/api/products/get-all-products",
+                    req.requestMatchers("/api/auth/register",
+                                    "/api/auth/logout",
+                                    "/api/auth/login/**",
+                                    "/api/auth/activate-account/**",
+                                    "/favicon.ico",
+                                    "/api/auth/activate-account-regain/**",
+                                    "/api/products/get-all-products",
                                     "/api/products/get-product-by-id/**",
                                     "/api/products/get-product-by-category-id/**",
-                                    "/api/products/search-product/**", "/api/category/get-all-categories",
-                                    "/api/category/get-category-by-id/**", "/api/users/init-roles",
-                                    "/api/auth/request-reset-password", "/api/auth/verify-reset-password-token",
-                                    "/api/auth/reset-password", "/api/order/**")
+                                    "/api/products/search-product/**",
+                                    "/api/category/get-all-categories",
+                                    "/api/category/get-category-by-id/**",
+                                    "/api/users/init-roles",
+                                    "/api/auth/request-reset-password",
+                                    "/api/auth/verify-reset-password-token",
+                                    "/api/auth/reset-password",
+                                    "/api/order/**",
+                                    "/swagger-ui/**",
+                                    "/v2/api-docs/**",
+                                    "/v3/api-docs/**",
+                                    "/swagger-resources/**",
+                                    "/configuration/ui/**",
+                                    "/configuration/security/**",
+                                    "/webjars/**",
+                                    "/swagger-ui.html/**")
                             .permitAll();
-                    req.anyRequest()
+                    req
+                            .anyRequest()
                             .authenticated();
                 })
-                .oauth2Login(customizer -> customizer.defaultSuccessUrl("/api/auth/login/google/success", true)
-                        .failureUrl("/api/auth/login/google/failure"))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login(customizer -> customizer
+                        .defaultSuccessUrl("/api/auth/login/google/success", true)
+                        .failureUrl("/api/auth/login/google/failure"))
                 .build();
     }
 
@@ -66,8 +79,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
-            throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
 

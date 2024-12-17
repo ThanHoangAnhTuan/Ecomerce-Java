@@ -84,11 +84,11 @@ export const getColumns = ({onUpdate, onDelete}: ColumnsProps): ColumnDef<IProdu
         },
     },
     {
-        accessorKey: "inventory",
+        accessorKey: "stock",
         header: "Số lượng tồn kho",
         cell: ({row}) => (
-            <div className="capitalize">
-                {row.getValue("inventory")}
+            <div className="capitalize text-right font-medium">
+                {row.getValue("stock")}
             </div>
         ),
     },

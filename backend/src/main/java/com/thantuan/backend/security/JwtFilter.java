@@ -38,7 +38,17 @@ public class JwtFilter extends OncePerRequestFilter {
                 "/api/auth/login/google", "/favicon.ico", "/api/products/get-all-products",
                 "/api/products/get-product-by-id", "/api/products/get-product-by-category-id",
                 "/api/products/search-product", "/api/category/get-all-categories", "/api/category/get-category-by-id",
-                "/api/users/init-roles", "/api/auth/login/google/success", "/api/auth/login/google/failure");
+                "/api/users/init-roles", "/api/auth/login/google/success", "/api/auth/login/google/failure",
+                "/swagger-ui",
+                "/v2/api-docs",
+                "/v3/api-docs",
+                "/swagger-resources",
+                "/configuration/ui",
+                "/configuration/security",
+                "/webjars",
+                "/swagger-ui.html",
+                "/swagger-ui/index.html",
+                "/favicon.ico");
         if (pathNotUseJwtFilter.stream().anyMatch(request.getServletPath()::contains)) {
             filterChain.doFilter(request, response);
             return;
