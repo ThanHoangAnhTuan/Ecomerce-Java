@@ -50,6 +50,7 @@ public class SecurityConfig {
                                     "/api/auth/verify-reset-password-token",
                                     "/api/auth/reset-password",
                                     "/api/order/**",
+                                    "/api/review/get-all-review-by-product-id/**",
                                     "/swagger-ui/**",
                                     "/v2/api-docs/**",
                                     "/v3/api-docs/**",

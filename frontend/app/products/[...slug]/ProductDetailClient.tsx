@@ -4,7 +4,7 @@ import Image from "next/image";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import React, {useEffect, useState} from "react";
-import {IProduct, IProductInCart} from "@/app/types/types";
+import {IProduct, IProductInCart, IUser} from "@/app/types/types";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Separator} from "@/components/ui/separator";
 import {useRouter} from "next/navigation";
@@ -14,20 +14,43 @@ import {useForm} from "react-hook-form"
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
-    FormLabel,
     FormMessage,
 } from "@/components/ui/form"
+import axios from "axios";
+import {Rating} from "@mui/material";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import {Label} from "@/components/ui/label"
 
 const formSchema = z.object({
-    comment: z.string().min(1)
+    comment: z.string().min(1, {message: "Vui lòng nhập nội dung bình luận!"})
 })
+
+interface IReview {
+    id: number,
+    content: string,
+    createAt: string,
+    product: IProduct,
+    rating: number,
+    user: IUser,
+}
 
 const ProductDetailClient = ({product}: { product: IProduct }) => {
     const [quantity, setQuantity] = useState<number>(1)
     const router = useRouter()
+    const [commentList, setCommentList] = useState<IReview[]>([]);
+    const [valueRating, setValueRating] = useState<number | null>(1);
+    const [open, setOpen] = useState<boolean>(false)
+    const [commentContent, setCommentContent] = useState<string>("");
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -43,7 +66,7 @@ const ProductDetailClient = ({product}: { product: IProduct }) => {
     }, [quantity]);
 
     if (!product) {
-        return null
+        router.push("/")
     }
 
     const handleAddProductToLocalStorage = async () => {
@@ -76,12 +99,48 @@ const ProductDetailClient = ({product}: { product: IProduct }) => {
         // show message
     }
 
-    // 2. Define a submit handler.
+    useEffect(() => {
+        try {
+            const fetchReview = async () => {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/review/get-all-review-by-product-id/${product.id}`)
+                const data = await response.data;
+                console.log(data)
+                setCommentList(data.reviewList)
+            }
+            fetchReview()
+        } catch (e: unknown) {
+            console.log((e as Error).message)
+        }
+    }, [product]);
+
     function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log(values)
+        setOpen(true);
+        setCommentContent(values.comment);
     }
+
+    const handleAddReview = async () => {
+        try {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/review/add-review`, {
+                content: commentContent,
+                productId: product.id,
+                rating: valueRating,
+            }, {
+                withCredentials: true
+            })
+            const data = await response.data;
+            setCommentList([
+                data.review,
+                ...commentList,
+            ])
+            setOpen(false);
+            form.reset();
+            setValueRating(1);
+        } catch (e: unknown) {
+            console.log((e as Error).message)
+        }
+    }
+
+    console.log(commentList)
 
     return (
         <div className={"flex flex-col "}>
@@ -151,10 +210,50 @@ const ProductDetailClient = ({product}: { product: IProduct }) => {
                         </form>
                     </Form>
                     <div>
-                        <h1>Chưa có bình luận nào</h1>
+                        {
+                            commentList?.map((comment) => {
+                                const [year, month, day] = comment.createAt.split("T")[0].split("-");
+                                const formattedDate = `${day}/${month}/${year}`;
+                                return (
+                                    <div key={comment.id} className={"mt-5"}>
+                                        <div className={"flex gap-5"}>
+                                            <Avatar>
+                                                <AvatarImage src={comment.user.image}/>
+                                                <AvatarFallback>{comment.user.name.charAt(0)}</AvatarFallback>
+                                            </Avatar>
+                                            <div>
+                                                <h1>{comment.content}</h1>
+                                                <p>{formattedDate}</p>
+                                                <Rating name="read-only" value={comment.rating} readOnly/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            })
+                        }
+                        {
+                            commentList.length === 0 && (
+                                <h1>Chưa có bình luận nào</h1>
+                            )
+                        }
                     </div>
                 </div>
             </div>
+
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <Rating
+                        name="simple-controlled"
+                        value={valueRating}
+                        onChange={(event, newValue) => {
+                            setValueRating(newValue);
+                        }}
+                    />
+                    <DialogFooter>
+                        <Button type={"button"} onClick={() => handleAddReview()}>Save changes</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }

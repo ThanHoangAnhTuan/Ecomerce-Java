@@ -19,7 +19,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Slf4j
 @SecurityRequirement(name = "bearerAuth")
-
 public class ProductController {
     private final ProductService productService;
 

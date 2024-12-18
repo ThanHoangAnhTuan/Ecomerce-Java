@@ -1,6 +1,5 @@
 package com.thantuan.backend.dto;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
@@ -18,6 +17,8 @@ public class Response {
     private int totalPage;
     private long totalElements;
     private List<String> validationErrors;
+    private ReviewDtoResponse review;
+    private List<ReviewDtoResponse> reviewList;
 
     private UserDto user;
     private List<UserDto> userList;

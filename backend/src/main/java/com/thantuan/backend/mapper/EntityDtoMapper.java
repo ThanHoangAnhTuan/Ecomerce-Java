@@ -67,4 +67,21 @@ public class EntityDtoMapper {
         orderDto.setBuyer(mapUserToUserDto(order.getBuyer()));
         return orderDto;
     }
+
+    public ReviewDtoResponse mapReviewToReviewDtoResponse(Review review) {
+        ReviewDtoResponse reviewDtoResponse = new ReviewDtoResponse();
+        reviewDtoResponse.setId(review.getId());
+        reviewDtoResponse.setContent(review.getContent());
+        reviewDtoResponse.setRating(review.getRating());
+        reviewDtoResponse.setUser(mapUserToUserDto(review.getUser()));
+        reviewDtoResponse.setProduct(mapProductToProductDto(review.getProduct()));
+        reviewDtoResponse.setCreateAt(review.getCreateAt());
+        return reviewDtoResponse;
+    }
+
+    public List<ReviewDtoResponse> mapReviewListToReviewDtoResponseList(List<Review> reviewList) {
+        return reviewList.stream()
+                .map(this::mapReviewToReviewDtoResponse)
+                .toList();
+    }
 }
