@@ -3,4 +3,4 @@ all:
     production-server:
       ansible_host: 18.142.20.51
       ansible_user: ubuntu
-      ansible_ssh_private_key_file: /path/to/private/key
+      ansible_ssh_private_key_file: /.ssh/id_rsa

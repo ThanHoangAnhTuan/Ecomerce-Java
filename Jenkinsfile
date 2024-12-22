@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         DOCKER_HUB_USERNAME = 'thantuan'
-        DOCKER_HUB_PASSWORD = credentials('docker-hub-password')
+        DOCKER_HUB_PASSWORD = credentials('docker-hub-token')
         BACKEND_IMAGE = 'thantuan/backend-app'
         FRONTEND_IMAGE = 'thantuan/frontend-app'
         IMAGE_TAG = 'latest'  // Sử dụng số build của Jenkins làm tag
