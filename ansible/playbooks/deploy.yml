@@ -1,0 +1,10 @@
+- name: Deploy Backend and Frontend
+  hosts: production-server
+  tasks:
+    - name: Stop Existing Containers
+      shell: |
+        sudo docker compose -f docker-compose.prod.yml down
+
+    - name: Start New Containers
+      shell: |
+        sudo docker compose -f docker-compose.prod.yml up -d

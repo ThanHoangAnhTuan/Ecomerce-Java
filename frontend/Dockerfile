@@ -5,13 +5,13 @@ FROM node:22-alpine AS build
 WORKDIR /app
 
 # Copy và cài đặt dependencies
-COPY ./frontend/package*.json ./
+COPY ./package*.json ./
 RUN npm install --legacy-peer-deps
 
-# Copy toàn bộ mã nguồn
-COPY ./frontend ./
+COPY .env.prod .env.production
 
-COPY ./frontend/.env.dev .env.local
+# Copy toàn bộ mã nguồn
+COPY ./ ./
 
 # Build ứng dụng Next.js
 RUN npm run build
@@ -23,7 +23,11 @@ FROM node:22-alpine AS production
 WORKDIR /app
 
 # Copy các file build từ giai đoạn trước
-COPY --from=build /app ./
+COPY --from=build /app/.next ./.next
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/public ./public
+COPY --from=build /app/.env.prod ./.env.production
 
 # Expose port 3000 cho ứng dụng Next.js
 EXPOSE 3000

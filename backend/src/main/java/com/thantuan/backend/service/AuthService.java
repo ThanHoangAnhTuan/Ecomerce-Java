@@ -255,6 +255,7 @@ public class AuthService {
                             .roles(Set.of(userRole))
                             .email(email)
                             .build();
+
             if (provider.equals("google")) {
                 user.setProvider(AuthProvider.GOOGLE);
             }

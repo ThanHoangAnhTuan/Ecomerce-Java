@@ -9,8 +9,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +26,9 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
+
+    @Value("${project.url_frontend}")
+    private String URL_FRONTEND;
 
     @PostMapping("/register")
     public ResponseEntity<Response> register(@RequestBody @Valid RegisterRequest registerRequest,
@@ -80,9 +85,9 @@ public class AuthController {
             throws IOException {
         try {
             authService.loginWithOAuth2Success(oAuth2AuthenticationToken, response);
-            response.sendRedirect("http://localhost:3000");
+            response.sendRedirect(URL_FRONTEND);
         } catch (EmailAlreadyExistsException e) {
-            response.sendRedirect("http://localhost:3000/login?error=Email is already registered with another provider");
+            response.sendRedirect(URL_FRONTEND + "/login?error=Email is already registered with another provider");
         }
     }
 

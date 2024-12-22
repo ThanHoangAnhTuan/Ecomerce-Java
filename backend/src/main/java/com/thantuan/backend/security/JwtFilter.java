@@ -40,6 +40,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 "/api/products/search-product", "/api/category/get-all-categories", "/api/category/get-category-by-id",
                 "/api/users/init-roles", "/api/auth/login/google/success", "/api/auth/login/google/failure",
                 "/api/review/get-all-review-by-product-id",
+                "/oauth2/authorization/google/",
                 "/swagger-ui",
                 "/v2/api-docs",
                 "/v3/api-docs",

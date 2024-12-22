@@ -36,6 +36,8 @@ public class SecurityConfig {
                     req.requestMatchers("/api/auth/register",
                                     "/api/auth/logout",
                                     "/api/auth/login/**",
+                                    "/api/auth/login/google/**",
+                                    "/oauth2/authorization/google/",
                                     "/api/auth/activate-account/**",
                                     "/favicon.ico",
                                     "/api/auth/activate-account-regain/**",

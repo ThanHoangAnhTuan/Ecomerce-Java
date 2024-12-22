@@ -5,8 +5,8 @@ FROM maven:3.9.9-eclipse-temurin-21 AS build
 WORKDIR /app
 
 # Copy các file pom.xml và source code vào container
-COPY backend/pom.xml ./pom.xml
-COPY backend/src ./src
+COPY ./pom.xml ./pom.xml
+COPY ./src ./src
 
 # Chạy Maven để build ứng dụng và tạo file .jar
 RUN mvn clean package -DskipTests -f ./pom.xml

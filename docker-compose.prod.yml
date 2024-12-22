@@ -17,6 +17,10 @@ services:
     image: thantuan/backend-app:latest
     pull_policy: always
     container_name: backend-app
+    build:
+      context: ./backend
+      args:
+        - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
     env_file:
       - ./backend/.env.prod
     environment:
@@ -34,6 +38,12 @@ services:
     image: thantuan/frontend-app:latest
     pull_policy: always
     container_name: frontend-app
+    build:
+      context: ./frontend
+      args:
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+        - SERVER_API_URL=${SERVER_API_URL}
+        - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
     env_file:
       - ./frontend/.env.prod
     ports:
@@ -49,18 +59,47 @@ services:
     image: nginx:alpine
     container_name: nginx-server
     volumes:
-      - ./nginx.prod.conf:/etc/nginx/nginx.prod.conf
+      - ./nginx/nginx.prod.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       - frontend
       - backend
     networks:
       - ecommerce-java
 
+  jenkins:
+    image: jenkins/jenkins:jdk21
+    container_name: jenkins
+    privileged: true
+    user: root
+    ports:
+      - "8888:8080"
+      - "50000:50000"
+    volumes:
+      - /jenkins:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ~/.ssh:/root/.ssh
+    networks:
+      - ecommerce-java
+
+  ansible:
+    image: alpine/ansible:latest
+    container_name: ansible
+    volumes:
+      - /ansible:/ansible
+      - ~/.ssh:/root/.ssh
+    networks:
+      - ecommerce-java
+
 networks:
   ecommerce-java:
+    name: ecommerce-java
     driver: bridge
 
 volumes:
   pgdata:
+  jenkins_home:
+  ansible_data:
