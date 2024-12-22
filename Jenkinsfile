@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', url: 'https://github.com/ThanHoangAnhTuan/Ecomerce-Java.git'
+                git branch: 'master', url: 'https://github.com/ThanHoangAnhTuan/Ecomerce-Java.git'
             }
         }
         stage('Build and Push Backend Image') {
