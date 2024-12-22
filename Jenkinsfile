@@ -1,11 +1,9 @@
 pipeline {
     agent any
     environment {
-        DOCKER_HUB_USERNAME = 'thantuan'
-        DOCKER_HUB_PASSWORD = credentials('docker-hub-token')
         BACKEND_IMAGE = 'thantuan/backend-app'
         FRONTEND_IMAGE = 'thantuan/frontend-app'
-        IMAGE_TAG = 'latest'  // Sử dụng số build của Jenkins làm tag
+        IMAGE_TAG = 'latest' // Sử dụng số build của Jenkins làm tag nếu cần: BUILD_NUMBER
     }
     stages {
         stage('Clone Repository') {
@@ -16,22 +14,20 @@ pipeline {
         stage('Build and Push Backend Image') {
             steps {
                 script {
-                    sh """
-                    docker build -t ${BACKEND_IMAGE}:${IMAGE_TAG} ./backend
-                    echo "${DOCKER_HUB_PASSWORD}" | docker login -u "${DOCKER_HUB_USERNAME}" --password-stdin
-                    docker push ${BACKEND_IMAGE}:${IMAGE_TAG}
-                    """
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-token') {
+                        def backendImage = docker.build("${BACKEND_IMAGE}:${IMAGE_TAG}", "./backend")
+                        backendImage.push()
+                    }
                 }
             }
         }
         stage('Build and Push Frontend Image') {
             steps {
                 script {
-                    sh """
-                    docker build -t ${FRONTEND_IMAGE}:${IMAGE_TAG} ./frontend
-                    echo "${DOCKER_HUB_PASSWORD}" | docker login -u "${DOCKER_HUB_USERNAME}" --password-stdin
-                    docker push ${FRONTEND_IMAGE}:${IMAGE_TAG}
-                    """
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-token') {
+                        def frontendImage = docker.build("${FRONTEND_IMAGE}:${IMAGE_TAG}", "./frontend")
+                        frontendImage.push()
+                    }
                 }
             }
         }
