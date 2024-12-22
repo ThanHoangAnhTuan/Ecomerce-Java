@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'maven:3.9.9-eclipse-temurin-21'
+        }
+    }
     environment {
         BACKEND_IMAGE = 'thantuan/backend-app'
         FRONTEND_IMAGE = 'thantuan/frontend-app'
@@ -9,6 +13,11 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 git branch: 'master', url: 'https://github.com/ThanHoangAnhTuan/Ecomerce-Java.git'
+            }
+        }
+        stage('Build Maven Project') {
+            steps {
+                sh 'mvn clean install' // Build project bằng Maven
             }
         }
         stage('Build and Push Backend Image') {

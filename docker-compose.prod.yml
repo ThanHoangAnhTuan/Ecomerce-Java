@@ -70,30 +70,6 @@ services:
     networks:
       - ecommerce-java
 
-  jenkins:
-    image: jenkins/jenkins:jdk21
-    container_name: jenkins
-    privileged: true
-    user: root
-    ports:
-      - "8888:8080"
-      - "50000:50000"
-    volumes:
-      - /jenkins:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ~/.ssh:/root/.ssh
-    networks:
-      - ecommerce-java
-
-  ansible:
-    image: alpine/ansible:latest
-    container_name: ansible
-    volumes:
-      - /ansible:/ansible
-      - ~/.ssh:/root/.ssh
-    networks:
-      - ecommerce-java
-
 networks:
   ecommerce-java:
     name: ecommerce-java
@@ -101,5 +77,4 @@ networks:
 
 volumes:
   pgdata:
-  jenkins_home:
-  ansible_data:
+
