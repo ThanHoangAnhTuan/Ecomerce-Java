@@ -15,11 +15,6 @@ pipeline {
                 git branch: 'master', url: 'https://github.com/ThanHoangAnhTuan/Ecomerce-Java.git'
             }
         }
-        stage('Build Maven Project') {
-            steps {
-                sh 'mvn clean install' // Build project bằng Maven
-            }
-        }
         stage('Build and Push Backend Image') {
             steps {
                 script {
